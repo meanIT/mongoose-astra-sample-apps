@@ -12,14 +12,13 @@ async function createProducts() {
   const existingCollections = await mongoose.connection.listCollections();
   for (const Model of Object.values(models)) {
     if (existingCollections.includes(Model.collection.collectionName)) {
+      console.log('Truncating', Model.collection.collectionName);
+      await Model.deleteMany({});
       continue;
     }
     console.log('Creating', Model.collection.collectionName);
     await Model.createCollection();
   }
-  await Promise.all(
-    Object.values(models).map(Model => Model.deleteMany({}))
-  );
   const { Product } = models;
 
   await Product.create({

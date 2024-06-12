@@ -21,13 +21,14 @@ async function run() {
   const existingCollections = await mongoose.connection.listCollections() as unknown as string[];
 
   for (const Model of Object.values(mongoose.connection.models)) {
-    console.log('Resetting collection', Model.collection.collectionName);
     // First ensure the collection exists
     if (!existingCollections.includes(Model.collection.collectionName)) {
+      console.log('Creating collection', Model.collection.collectionName);
       await mongoose.connection.createCollection(Model.collection.collectionName);
+    } else {
+      console.log('Clearing collection', Model.collection.collectionName);
+      await Model.deleteMany({});
     }
-    // Then make sure the collection is empty
-    await Model.deleteMany({});
   }
 
   const users = await User.create([
