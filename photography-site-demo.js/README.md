@@ -2,7 +2,7 @@
 
 # photography-site
 
-This sample app demonstrates a photography site by using [`express`](https://www.npmjs.com/package/express), [`mongoose`](https://github.com/Automattic/mongoose) and [`stargate-mongoose`](https://github.com/stargate/stargate-mongoose). 
+This sample app demonstrates a photography site by using [`express`](https://www.npmjs.com/package/express), [`mongoose`](https://github.com/Automattic/mongoose) and [`stargate-mongoose`](https://github.com/stargate/stargate-mongoose).
 
 ## Environment
 
@@ -38,10 +38,9 @@ Make sure you have Node.js 17 or higher
 1. Copy the `.env.example` file to `.env` and fill in the values for the environment variables.
 2. Set `IS_ASTRA` to `false`
 3. Set `OPENAI_API_KEY` to your openAI api key
-4. Set `JSON_API_URL` to `http://127.0.0.1:8181/v1/photography`
-5. Set `JSON_API_AUTH_URL` to `http://127.0.0.1:8181/v1/auth`
-6. Set `JSON_API_AUTH_USERNAME` to `cassandra`
-7. Set `JSON_API_AUTH_PASSWORD` to `cassandra`
+4. Set `DATA_API_URL` to `http://127.0.0.1:8181/v1/photography`
+5. Set `DATA_API_AUTH_USERNAME` to `cassandra`
+6. Set `DATA_API_AUTH_PASSWORD` to `cassandra`
 
 
 
@@ -51,4 +50,3 @@ Make sure you have Node.js 17 or higher
 2. Run `npm run seed`
 3. Run `npm start`
 4. Visit `http://127.0.0.1:3000` to see the UI
-

@@ -4,7 +4,7 @@ const mongoose = require('./mongoose');
 const options = {
   collectionOptions: {
     vector: {
-      size: 1536, //embedding array size for openAI embedding api, text->vector
+      size: 768, //embedding array size for Nomic embedding api, text->vector
       function: 'cosine'
     }
   }
@@ -30,7 +30,7 @@ const photoSchema = new mongoose.Schema({
   },
   $vector: {
     type: [Number],
-    validate: v => v == null || v.length === 1536
+    validate: [v => v == null || v.length === 768, 'Invalid vector length, must be 768']
   }
 }, options);
 

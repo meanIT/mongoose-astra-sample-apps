@@ -8,8 +8,8 @@ const Photo = require('../server/models/Photo');
 describe('Vector Search Tests', function() {
   it('Photo Text Embedding Test', async function() {
 
-    // Generate 1536 random float numbers between 0 and 1
-    const targetVector =  Array.from({ length: 1536 }, () => Math.random());
+    // Generate 768 random float numbers between 0 and 1
+    const targetVector = Array.from({ length: 768 }, () => Math.random());
 
     const photo1 = new Photo({
       name: 'testName1',
@@ -25,7 +25,7 @@ describe('Vector Search Tests', function() {
       description: 'These violent delights have violent ends',
       category: 'landscape',
       image: 'testImage2',
-      $vector: Array.from({ length: 1536 }, () => Math.random())
+      $vector: Array.from({ length: 768 }, () => Math.random())
     });
     await photo2.save();
 

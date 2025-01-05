@@ -1,23 +1,21 @@
 'use strict';
-// openAI embedding
-// https://platform.openai.com/docs/api-reference/embeddings/create
-const axios = require('axios');
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-const endpoint = 'https://api.openai.com/v1/embeddings';
-const modelType = 'text-embedding-ada-002';
 
-const config = {
-  headers: {
-    Authorization: `Bearer ${OPENAI_API_KEY}`,
-    'Content-Type': 'application/json'
-  }
-};
+const axios = require('axios');
 
 module.exports = async function createPhotoEmbedding(photoDescription) {
-  const requestData = {
-    input: photoDescription,
-    model: modelType
-  };
-  const response = await axios.post(endpoint, requestData, config);
-  return response.data.data[0].embedding;
+  const response = await axios.post(
+    'https://api-atlas.nomic.ai/v1/embedding/text',
+    {
+      model: 'nomic-embed-text-v1',
+      texts: [photoDescription],
+      task_type: 'search_document',
+      dimensionality: 768
+    },
+    {
+      headers: {
+        'Authorization': `Bearer ${process.env.NOMIC_API_KEY}`
+      }
+    }
+  );
+  return response.data.embeddings[0];
 };

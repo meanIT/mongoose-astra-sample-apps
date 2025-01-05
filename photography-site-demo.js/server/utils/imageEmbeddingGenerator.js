@@ -1,18 +1,23 @@
 'use strict';
-const { PythonShell } = require('python-shell');
+
+const axios = require('axios');
+const fs = require('fs');
 
 module.exports = async function getPhotoEmbedding(fileName) {
   const filePath = './public/uploads/' + fileName;
-  const options = {
-    args: [filePath]
-  };
 
-  return new Promise((resolve, reject) => {
-    PythonShell.run('./server/utils/imageEmbeddingGenerator.py', options).then(messages => {
-      const vector = JSON.parse(messages[0]);
-      resolve(vector);
-    }).catch(error => {
-      reject(error);
-    });
+  const response = await axios.post(
+    'https://api-atlas.nomic.ai/v1/embedding/image',
+    {
+      model: 'nomic-embed-vision-v1.5',
+      images: fs.createReadStream(filePath)
+    },
+    {
+    headers: {
+      'Authorization': `Bearer ${process.env.NOMIC_API_KEY}`,
+      'Content-Type': 'multipart/form-data'
+    }
   });
+
+  return response.data.embeddings[0];
 };
