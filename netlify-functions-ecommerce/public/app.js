@@ -480,9 +480,6 @@ module.exports = "<div class=\"products\">\n  <h1>All Products</h1>\n  <div clas
 /******/ 	}
 /******/ 	
 /************************************************************************/
-var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
-(() => {
 /*!*******************************!*\
   !*** ./frontend/src/index.js ***!
   \*******************************/
@@ -556,7 +553,5 @@ router.replace(window.location.pathname);
 app.use(router);
 
 app.mount('#content');
-})();
-
 /******/ })()
 ;

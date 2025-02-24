@@ -23,7 +23,7 @@ async function register(request: Request, response: Response): Promise<void> {
   const hash = bcrypt.hashSync(request.body.password, salt);
   await Authentication.create({
     type: 'password',
-    userId: user._id,
+    userId: user.id,
     secret: hash
   });
   response.status(200).json({ user: user });

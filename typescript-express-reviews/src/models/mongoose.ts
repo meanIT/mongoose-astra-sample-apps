@@ -1,9 +1,8 @@
 import mongoose from 'mongoose';
-
-mongoose.set('autoCreate', false);
-mongoose.set('autoIndex', false);
-
 import { driver } from 'stargate-mongoose';
-mongoose.setDriver(driver);
 
-export default mongoose;
+const mongooseInstance = mongoose.setDriver(driver);
+mongooseInstance.set('autoCreate', false);
+mongooseInstance.set('autoIndex', false);
+
+export default mongooseInstance;

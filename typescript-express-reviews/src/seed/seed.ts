@@ -9,6 +9,10 @@ import Review from '../models/review';
 import User from '../models/user';
 import Vehicle from '../models/vehicle';
 import bcrypt from 'bcryptjs';
+import { driver, tableDefinitionFromSchema } from 'stargate-mongoose';
+
+import util from 'util';
+util.inspect.defaultOptions.depth = 6;
 
 run().catch(err => {
   console.error(err);
@@ -17,24 +21,38 @@ run().catch(err => {
 
 async function run() {
   await connect();
-
-  const existingCollections = await mongoose.connection.listCollections()
-    .then(collections => collections.map(c => c.name));
-
-  for (const Model of Object.values(mongoose.connection.models)) {
-    
-    // First ensure the collection exists
-    if (!existingCollections.includes(Model.collection.collectionName)) {
-      console.log('Creating collection', Model.collection.collectionName);
-      await mongoose.connection.createCollection(Model.collection.collectionName);
-    } else {
-      console.log('Resetting collection', Model.collection.collectionName);
-    }
-    // Then make sure the collection is empty
-    await Model.deleteMany({});
+  if (!process.env.IS_ASTRA) {
+    await mongoose.connection.createNamespace(mongoose.connection.namespace as string);
   }
 
-  const users = await User.create([
+  if (process.env.DATA_API_TABLES) {
+    await mongoose.connection.dropTable('authentications');
+    await mongoose.connection.dropTable('reviews');
+    await mongoose.connection.dropTable('users');
+    await mongoose.connection.dropTable('vehicles');
+
+    await mongoose.connection.createTable('authentications', tableDefinitionFromSchema(Authentication.schema));
+    await mongoose.connection.createTable('reviews', tableDefinitionFromSchema(Review.schema));
+    await mongoose.connection.createTable('users', tableDefinitionFromSchema(User.schema));
+    await mongoose.connection.createTable('vehicles', tableDefinitionFromSchema(Vehicle.schema));
+  } else {
+    const existingCollections = await mongoose.connection.listCollections()
+      .then(collections => collections.map(c => c.name));
+
+    for (const Model of Object.values(mongoose.connection.models)) {
+      // First ensure the collection exists
+      if (!existingCollections.includes(Model.collection.collectionName)) {
+        console.log('Creating collection', Model.collection.collectionName);
+        await mongoose.connection.createCollection(Model.collection.collectionName);
+      } else {
+        console.log('Resetting collection', Model.collection.collectionName);
+      }
+      // Then make sure the collection is empty
+      await Model.deleteMany({});
+    }
+  }
+
+  const users = await User.insertMany([
     {
       firstName: 'Dominic',
       lastName: 'Toretto',
@@ -47,13 +65,13 @@ async function run() {
     }
   ]);
   for (let i = 0; i < users.length; i++) {
-    await Authentication.create({
+    await Authentication.insertMany([{
       type: 'password',
-      userId: users[i]._id,
+      userId: users[i].id,
       secret: await bcrypt.hash(users[i].firstName.toLowerCase(), 10)
-    });
+    }]);
   }
-  const vehicles = await Vehicle.create([
+  const vehicles = await Vehicle.insertMany([
     {
       _id: '0'.repeat(24),
       make: 'Tesla',
@@ -80,16 +98,16 @@ async function run() {
     }
   ]);
 
-  await Review.create([
+  await Review.insertMany([
     {
-      vehicleId: vehicles[1]._id,
-      userId: users[0]._id,
+      vehicleId: vehicles[1].id,
+      userId: users[0].id,
       text: 'When you live your life a quarter of a mile at a time, it ain\'t just about being fast. I needed a 10 second car, and this car delivers.',
       rating: 4
     },
     {
-      vehicleId: vehicles[0]._id,
-      userId: users[1]._id,
+      vehicleId: vehicles[0].id,
+      userId: users[1].id,
       text: 'I need NOS. My car topped out at 140 miles per hour this morning.',
       rating: 3
     }

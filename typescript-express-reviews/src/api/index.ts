@@ -11,6 +11,8 @@ import findByVehicle from './Review/findByVehicle';
 import bodyParser from 'body-parser';
 import connect from '../models/connect';
 
+import studio from '@mongoosejs/studio';
+
 const port = process.env.PORT || 3000;
 
 void async function main() {
@@ -31,6 +33,9 @@ void async function main() {
   app.postAsync('/review/create', create);
   app.getAsync('/vehicle/find-by-id', findById);
   app.getAsync('/review/find-by-vehicle', findByVehicle);
+
+  app.use('/studio', studio.express('/studio/api'));
+  console.log('Mongoose Studio mounted on /studio');
 
   await app.listen(port);
   console.log('Listening on port ' + port);

@@ -14,6 +14,7 @@ const handler = async(event) => {
       setOptions({ sanitizeFilter: true });
     return { statusCode: 200, body: JSON.stringify({ cart }) };
   } catch (error) {
+    console.error(error);
     return { statusCode: 500, body: error.toString() };
   }
 };

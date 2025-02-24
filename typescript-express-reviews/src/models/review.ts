@@ -18,8 +18,16 @@ const schema = new mongoose.Schema({
   vehicleId: {
     type: 'ObjectId',
     required: true
+  },
+  createdAt: {
+    type: Number,
+    default: () => Date.now()
+  },
+  updatedAt: {
+    type: Number,
+    default: () => Date.now()
   }
-}, { timestamps: true });
+}, { versionKey: false, timestamps: true });
 
 schema.virtual('user', {
   ref: 'User',

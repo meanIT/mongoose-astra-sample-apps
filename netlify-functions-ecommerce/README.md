@@ -12,7 +12,7 @@ Other tools include:
 Make sure you have a local stargate instance running as described on the [main page](../README.md) of this repo.
 
 ## Running This Example 
-### Setting up .env file to run against JSON API
+### Setting up .env file to run against Data API
 1. Copy the `.env.example` file to `.env` and fill in the values for the environment variables.
 2. Set `IS_ASTRA` to `false`
 3. Set `DATA_API_URI` to `http://127.0.0.1:8181/v1/ecommerce_test`
@@ -20,6 +20,7 @@ Make sure you have a local stargate instance running as described on the [main p
 5. Set `DATA_API_AUTH_USERNAME` to `cassandra`
 6. Set `DATA_API_AUTH_PASSWORD` to `cassandra`
 7. Remove `ASTRA_DB_ID`, `ASTRA_DB_REGION`, `ASTRA_DB_KEYSPACE`, `ASTRA_DB_APPLICATION_TOKEN`
+8. (Optional) Set `DATA_API_TABLES=true` to make stargate-mongoose set the `Feature-Flag-tables` headers to enable API tables
 
 ### Setting up .env file to run against AstraDB
 1. Copy the `.env.example` file to `.env` and fill in the values for the environment variables.
@@ -34,7 +35,7 @@ Make sure you have a local stargate instance running as described on the [main p
 1. Run `npm install`
 2. Run `npm run seed` to create all collections and insert sample data
 3. Run `npm run build` to compile the frontend
-4. (Optional) set `STRIPE_SECRET_KEY` to a test Stripe API key in your `.env` file. This will allow you to enable Stripe checkout.
+4. (Optional) set `STRIPE_SECRET_KEY` to a test Stripe API key in your `.env` file. This will allow you to enable Stripe checkout. Or set `STRIPE_SECRET_KEY` to `test` to skip Stripe scheckout
 5. Run `npm start`
 Run `npm run test:smoke` to run a smoke test against `http://127.0.0.1:8888` that creates a cart using [Axios](https://masteringjs.io/axios).
 6. Visit `http://127.0.0.1:8888/` to see the UI
