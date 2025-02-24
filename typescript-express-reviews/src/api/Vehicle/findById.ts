@@ -1,6 +1,11 @@
 import express, { Request, Response } from 'express';
-import Vehicle from '../../models/vehicle';
 import Review from '../../models/review';
+import User from '../../models/user';
+import Vehicle from '../../models/vehicle';
+
+type ReviewDocument = ReturnType<(typeof Review)['hydrate']>;
+type UserDocument = ReturnType<(typeof User)['hydrate']>;
+type VehicleDocument = ReturnType<(typeof Vehicle)['hydrate']>;
 
 async function last5(request: Request, response: Response): Promise<void> {
   let limit = 5;
@@ -17,7 +22,7 @@ async function last5(request: Request, response: Response): Promise<void> {
     findById({ _id: request.query?._id }).
     setOptions({ sanitizeFilter: true });
   const reviews = await Review.
-    find({ vehicleId }).
+    find<ReviewDocument & { user?: UserDocument, vehicle?: VehicleDocument }>({ vehicleId: vehicleId }).
     sort({ createdAt: -1 }).
     limit(limit).
     populate('user').

@@ -17,15 +17,22 @@ const handler = async(event) => {
       return { statusCode: 200, body: cart };
     }
     if (event.body?.item?.quantity) {
+      cart.items = [
+        ...cart.items.slice(0, index),
+        { ...cart.items[index], quantity: cart.items[index].quantity - event.body.item.quantity },
+        ...cart.items.slice(index + 1)
+      ];
       cart.items[index].quantity -= event.body.item.quantity;
       if (cart.items[index].quantity <= 0) {
         cart.items.splice(index, 1);
       }
-      await cart.save();
     } else {
-      cart.items.splice(index, 1);
-      await cart.save();
+      cart.items = [
+        ...cart.items.slice(0, index),
+        ...cart.items.slice(index + 1)
+      ];
     }
+    await cart.save();
     return { statusCode: 200, body: JSON.stringify(cart) };
   } catch (error) {
     console.log(error);

@@ -10,6 +10,8 @@ const options = {
   }
 };
 
+const vectorKey = process.env.DATA_API_TABLES ? 'vector' : '$vector';
+
 const photoSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -28,9 +30,10 @@ const photoSchema = new mongoose.Schema({
     enum: ['landscape', 'street', 'animal'],
     required: 'This field is required.'
   },
-  $vector: {
+  [vectorKey]: {
     type: [Number],
-    validate: [v => v == null || v.length === 768, 'Invalid vector length, must be 768']
+    validate: [v => v == null || v.length === 768, 'Invalid vector length, must be 768'],
+    dimension: 768
   }
 }, options);
 

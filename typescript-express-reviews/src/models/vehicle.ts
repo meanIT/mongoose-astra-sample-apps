@@ -1,5 +1,7 @@
 import mongoose from './mongoose';
 
+const imagesSchemaType = new mongoose.Schema.Types.Array('images', { type: [String] });
+
 const schema = new mongoose.Schema({
   make: {
     type: String,
@@ -14,9 +16,7 @@ const schema = new mongoose.Schema({
     required: true,
     validate: (v: number) => Number.isInteger(v) && v >= 1950
   },
-  images: {
-    type: [String]
-  },
+  images: [String],
   numReviews: {
     type: Number,
     required: true,
@@ -27,7 +27,7 @@ const schema = new mongoose.Schema({
     required: true,
     default: 0
   }
-});
+}, { versionKey: false });
 
 const Vehicle = mongoose.model('Vehicle', schema);
 

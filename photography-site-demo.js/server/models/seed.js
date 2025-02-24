@@ -1,5 +1,7 @@
 'use strict';
 
+require('dotenv').config();
+
 const Category = require('./Category');
 const Photo = require('./Photo');
 const PhotoEmbedding = require('./PhotoEmbedding');
@@ -7,19 +9,31 @@ const connect = require('./connect');
 const getPhotoEmbedding = require('../utils/imageEmbeddingGenerator');
 const getTextEmbedding = require('../utils/textEmbeddingGenerator');
 const mongoose = require('./mongoose');
+const { tableDefinitionFromSchema } = require('stargate-mongoose');
+
+const vectorKey = process.env.DATA_API_TABLES ? 'vector' : '$vector';
 
 async function deleteAll() {
-  await connect();
-  try {
-    await Category.db.dropCollection('categories');
-    await Category.db.dropCollection('photos');
-    await Category.db.dropCollection('photoembeddings');
-  } catch (error) {
+  if (process.env.DATA_API_TABLES) {
+    await mongoose.connection.dropTable('categories');
+    await mongoose.connection.dropTable('photos');
+    await mongoose.connection.dropTable('photoembeddings');
+  } else {
+    try {
+      await Category.db.dropCollection('categories');
+      await Category.db.dropCollection('photos');
+      await Category.db.dropCollection('photoembeddings');
+    } catch (error) {
+    }
   }
 }
 
 async function createCategories() {
-  await Category.createCollection();
+  if (process.env.DATA_API_TABLES) {
+    await mongoose.connection.createTable('categories', tableDefinitionFromSchema(Category.schema));
+  } else {
+    await Category.createCollection();
+  }
   await Category.create({
     name: 'landscape',
     image: 'montery.png'
@@ -103,39 +117,51 @@ const data = [
 ];
 
 async function createPhotos() {
-  await Photo.createCollection();
+  if (process.env.DATA_API_TABLES) {
+    await mongoose.connection.createTable('photos', tableDefinitionFromSchema(Photo.schema));
+    await mongoose.connection.collection('photos').createVectorIndex('photosvector', 'vector');
+  } else {
+    await Photo.createCollection();
+  }
   for (let i = 0; i < data.length; i++) {
     await Photo.create({
       name: data[i].name,
       description: data[i].description,
       category: data[i].category,
       image: data[i].image,
-      $vector: await getTextEmbedding(data[i].description)
+      [vectorKey]: await getTextEmbedding(data[i].description)
     });
   }
 }
 
 
 async function createPhotoEmbeddings() {
-  // Need to disable indexing for embeddings, otherwise creating PhotoEmbeddings
-  // fails with the following error:
-  // "Term of column query_text_values exceeds the byte limit for index. Term size 1.115KiB. Max allowed size 1.000KiB.""
-  await PhotoEmbedding.createCollection({
-    indexing: { deny: ['description'] }
-  });
+  if (process.env.DATA_API_TABLES) {
+    await mongoose.connection.createTable('photoembeddings', tableDefinitionFromSchema(PhotoEmbedding.schema));
+    await mongoose.connection.collection('photoembeddings').createVectorIndex('photoembeddingsvector', 'vector');
+  } else {
+    await PhotoEmbedding.createCollection({
+      indexing: { deny: ['description'] }
+    });
+  }
   for (let i = 0; i < data.length; i++) {
     await PhotoEmbedding.create({
       name: data[i].name,
       description: data[i].description,
       category: data[i].category,
       image: data[i].image,
-      $vector: await getPhotoEmbedding(data[i].image)
+      [vectorKey]: await getPhotoEmbedding(data[i].image)
     });
   }
 }
 
 
 async function populate() {
+  await connect();
+  if (!process.env.IS_ASTRA) {
+    await mongoose.connection.createNamespace(mongoose.connection.namespace);
+  }
+
   await deleteAll();
   await createCategories();
   await createPhotos();
@@ -148,4 +174,4 @@ async function populate() {
 populate().catch(error => {
   console.error(error);
   process.exit(-1);
-});;
+});

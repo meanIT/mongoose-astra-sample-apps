@@ -1,5 +1,11 @@
 import express, { Request, Response } from 'express';
 import Review from '../../models/review';
+import User from '../../models/user';
+import Vehicle from '../../models/vehicle';
+
+type ReviewDocument = ReturnType<(typeof Review)['hydrate']>;
+type UserDocument = ReturnType<(typeof User)['hydrate']>;
+type VehicleDocument = ReturnType<(typeof Vehicle)['hydrate']>;
 
 async function findByVehicle (request: Request, response: Response): Promise<void> {
   let limit = 5;
@@ -17,13 +23,14 @@ async function findByVehicle (request: Request, response: Response): Promise<voi
   }
 
   const reviews = await Review.
-    find({ vehicleId }).
+    find<ReviewDocument & { user?: UserDocument, vehicle?: VehicleDocument }>({ vehicleId: vehicleId }).
     sort({ createdAt: -1 }).
     skip(skip).
     limit(limit).
     populate('user').
     populate('vehicle').
     setOptions({ sanitizeFilter: true });
+
   response.status(200).json({ reviews: reviews });
   return;
 };

@@ -27,7 +27,11 @@ describe('Add to Cart', function() {
     };
     params.body = JSON.stringify(params.body);
     const result = await addToCart(params);
-    result.body = JSON.parse(result.body);
+    try {
+      result.body = JSON.parse(result.body);
+    } catch (error) {
+      throw new Error(`Error parsing response as JSON: ${result.body}`);
+    }
     assert(result.body);
     assert(result.body.items.length);
   });
@@ -47,7 +51,11 @@ describe('Add to Cart', function() {
     };
     params.body = JSON.stringify(params.body);
     const findCart = await addToCart(params);
-    findCart.body = JSON.parse(findCart.body);
+    try {
+      findCart.body = JSON.parse(findCart.body);
+    } catch (error) {
+      throw new Error(`Error parsing response as JSON: ${findCart.body}`);
+    }
     assert(findCart.body);
     assert.equal(findCart.body.items.length, 2);
   });
@@ -67,7 +75,11 @@ describe('Add to Cart', function() {
     };
     params.body = JSON.stringify(params.body);
     const findCart = await addToCart(params);
-    findCart.body = JSON.parse(findCart.body);
+    try {
+      findCart.body = JSON.parse(findCart.body);
+    } catch (error) {
+      throw new Error(`Error parsing response as JSON: ${findCart.body}`);
+    }
     assert(findCart.body);
     assert.equal(findCart.body.items.length, 2);
     assert.equal(findCart.body.items[0].quantity, 2);

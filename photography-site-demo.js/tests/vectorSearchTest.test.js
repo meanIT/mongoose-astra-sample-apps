@@ -5,6 +5,8 @@ const assert = require('assert');
 
 const Photo = require('../server/models/Photo');
 
+const vectorKey = process.env.DATA_API_TABLES ? 'vector' : '$vector';
+
 describe('Vector Search Tests', function() {
   it('Photo Text Embedding Test', async function() {
 
@@ -16,7 +18,7 @@ describe('Vector Search Tests', function() {
       description: 'A free and happy bird is flying upon the sky',
       category: 'landscape',
       image: 'testImage1',
-      $vector: targetVector
+      [vectorKey]: targetVector
     });
     await photo1.save();
 
@@ -25,12 +27,12 @@ describe('Vector Search Tests', function() {
       description: 'These violent delights have violent ends',
       category: 'landscape',
       image: 'testImage2',
-      $vector: Array.from({ length: 768 }, () => Math.random())
+      [vectorKey]: Array.from({ length: 768 }, () => Math.random())
     });
     await photo2.save();
 
     //should find photo1, since its vector is the same with targetVector
-    const photo = await Photo.find({}).sort({ $vector: { $meta: targetVector } }).limit(1);
+    const photo = await Photo.find({}).sort({ [vectorKey]: { $meta: targetVector } }).limit(1);
     assert.equal(photo[0].name, 'testName1');
 
   });

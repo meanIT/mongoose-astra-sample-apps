@@ -8,7 +8,10 @@ const sinon = require('sinon');
 
 describe('createdocument', function() {
   it('inserts a new document', async function() {
-    await Bot.deleteMany({});
+    let docs = await Bot.find({});
+    for (const doc of docs) {
+      await Bot.deleteOne({ _id: doc._id });
+    }
 
     const interaction = {
       reply: sinon.stub()
@@ -17,7 +20,7 @@ describe('createdocument', function() {
     assert.ok(interaction.reply.calledOnce);
     assert.deepEqual(interaction.reply.getCalls()[0].args, ['done!']);
 
-    const docs = await Bot.find();
+    docs = await Bot.find({});
     assert.equal(docs.length, 1);
     assert.equal(docs[0].name, 'I am a document');
   });

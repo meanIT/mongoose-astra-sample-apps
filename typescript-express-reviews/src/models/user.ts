@@ -14,7 +14,7 @@ const schema = new mongoose.Schema({
     type: String,
     required: true
   }
-});
+}, { versionKey: false });
 
 schema.virtual('displayName').get(function() {
   return this.firstName + ' ' + this.lastName.slice(0, 1) + '.';

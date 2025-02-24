@@ -25,7 +25,7 @@
     "mongoose": "^8.0.3",
     "python-shell": "^5.0.0",
     "mocha": "11.1.0",
-    "stargate-mongoose": "0.6.10"
+    "stargate-mongoose": "git@github.com:stargate/stargate-mongoose#vkarpov15/astra-stargate-example"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"

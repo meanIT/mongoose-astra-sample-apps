@@ -16,10 +16,9 @@ async function login(request: Request, response: Response): Promise<void> {
     return;
   }
 
-  const authentication = await Authentication.findOne({
-    type: 'password',
-    userId: user._id
-  });
+  const authentication = await Authentication.find({
+    userId: user.id
+  }).then(authentications => authentications.find(auth => auth.type === 'password'));
   if (authentication == null) {
     response.status(404).json({
       error: 'This account does not have a password set'

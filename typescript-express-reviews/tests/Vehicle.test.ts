@@ -26,12 +26,12 @@ describe('Vehicle', function() {
       };
       return res;
     };
-    const user = await User.create({
+    const [user] = await User.insertMany([{
       email: 'test@localhost.com',
       firstName: 'Test',
       lastName: 'Testerson'
-    });
-    const vehicle = await Vehicle.create(
+    }]);
+    const [vehicle] = await Vehicle.insertMany([
       {
         make: 'Tesla',
         model: 'Model S',
@@ -43,7 +43,7 @@ describe('Vehicle', function() {
         numReviews: 0,
         averageReview: 0
       }
-    );
+    ]);
     for (let i = 1; i < 7; i++) {
       await Review.create({
         rating: i > 5 ? 5 : i,
@@ -55,7 +55,7 @@ describe('Vehicle', function() {
     vehicle.numReviews = 5;
     vehicle.averageReview = 3;
     await vehicle.save();
-    const req = mockRequest({ _id: vehicle._id.toString(), limit: 5 });
+    const req = mockRequest({ _id: vehicle.id.toString(), limit: 5 });
     const res = mockResponse();
     await findById(req, res);
     assert(res.json.getCall(0).args[0].vehicle);

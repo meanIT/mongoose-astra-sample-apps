@@ -6,6 +6,7 @@ const fileUpload = require('express-fileupload');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const flash = require('connect-flash');
+const connect = require('./server/models/connect');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -35,4 +36,8 @@ app.use('/', routes);
 const cors = require('cors');
 app.use(cors());
 
-app.listen(port, () => console.log(`Listening to port ${port}`));
+(async function () {
+  await connect();
+
+  app.listen(port, () => console.log(`Listening to port ${port}`));
+})();

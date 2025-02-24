@@ -9,7 +9,7 @@ const schema = new mongoose.Schema({
   },
   userId: { type: mongoose.Types.ObjectId, required: true },
   secret: { type: String, required: true }
-});
+}, { versionKey: false });
 
 const Authentication = mongoose.model('Authentication', schema);
 

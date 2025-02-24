@@ -21,7 +21,7 @@
     "discord.js": "14.18.0",
     "dotenv": "16.4.7",
     "mongoose": "^8.1",
-    "stargate-mongoose": "0.6.10"
+    "stargate-mongoose": "git@github.com:stargate/stargate-mongoose#vkarpov15/astra-stargate-example"
   },
   "devDependencies": {
     "eslint": "9.21.0",

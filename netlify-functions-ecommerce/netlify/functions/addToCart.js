@@ -29,13 +29,25 @@ const handler = async(event) => {
         };
       }
       for (const product of event.body.items) {
-        const exists = cart.items.find(item => item?.productId?.toString() === product?.productId?.toString());
+        const exists = cart.items?.find(item => item?.productId?.toString() === product?.productId?.toString());
         if (!exists && products.find(p => product?.productId?.toString() === p?._id?.toString())) {
-          cart.items.push(product);
-          await cart.save();
+          cart.items = [
+            ...cart.items,
+            product
+          ];
         } else {
-          exists.quantity += product.quantity;
-          await cart.save();
+          const items = [];
+          for (let i = 0; i < cart.items.length; ++i) {
+            const item = cart.items[i];
+            if (item?.productId?.toString() === product?.productId?.toString()) {
+              continue;
+            }
+            items.push(item);
+          }
+          cart.items = [
+            ...items,
+            { productId: product.productId, quantity: exists.quantity + product.quantity }
+          ];
         }
       }
 
@@ -47,10 +59,11 @@ const handler = async(event) => {
       return { statusCode: 200, body: JSON.stringify(cart) };
     } else {
       // If no cartId, create a new cart
-      const cart = await Cart.create({ items: event.body.items });
+      const [cart] = await Cart.insertMany([{ items: event.body.items }]);
       return { statusCode: 200, body: JSON.stringify(cart) };
     }
   } catch (error) {
+    console.error(error);
     return { statusCode: 500, body: error.toString() };
   }
 };

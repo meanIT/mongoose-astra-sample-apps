@@ -6,7 +6,7 @@
     "dotenv": "16.4.7",
     "mongoose": "^8.1",
     "sinon": "19.0.2",
-    "stargate-mongoose": "0.6.10",
+    "stargate-mongoose": "git@github.com:stargate/stargate-mongoose#vkarpov15/astra-stargate-example",
     "stripe": "17.6.0",
     "vanillatoasts": "1.6.0",
     "webpack": "5.x"
@@ -19,7 +19,7 @@
     "netlify-cli": "18.1.0"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=18.0.0"
   },
   "scripts": {
     "build": "node ./frontend/build",

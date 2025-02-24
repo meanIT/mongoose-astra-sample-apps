@@ -34,19 +34,19 @@ describe('User', function() {
   });
 
   it('should login a user', async function() {
-    const user = await User.create({
+    const [user] = await User.insertMany([{
       email: 'test1@localhost.com',
       firstName: 'Test',
       lastName: 'Testerson'
-    });
+    }]);
 
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync('password', salt);
-    await Authentication.create({
+    await Authentication.insertMany([{
       type: 'password',
-      userId: user._id,
+      userId: user.id,
       secret: hash
-    });
+    }]);
 
     const mockRequest = (body) => ({
       body

@@ -25,7 +25,8 @@ module.exports = async function connect() {
     uri = process.env.DATA_API_URL;
     jsonApiConnectOptions = {
       username: process.env.DATA_API_AUTH_USERNAME,
-      password: process.env.DATA_API_AUTH_PASSWORD
+      password: process.env.DATA_API_AUTH_PASSWORD,
+      useTables: !!process.env.DATA_API_TABLES
     };
   }
   await mongoose.connect(uri, jsonApiConnectOptions);
